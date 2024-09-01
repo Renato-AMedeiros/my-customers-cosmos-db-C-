@@ -20,7 +20,7 @@ namespace my_customers_cosmos_db_C_.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCustomers([FromBody] CreateCustomerRequestModel model )
         {
-            var response = _customerService.CreateCustomer(model);
+            var response = await _customerService.CreateCustomer(model);
 
             return Ok(response);
         }

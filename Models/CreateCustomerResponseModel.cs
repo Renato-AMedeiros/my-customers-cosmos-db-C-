@@ -8,7 +8,7 @@ namespace my_customers_cosmos_db_C_.Models
         public string Id { get; set; }
 
         [JsonProperty("storeId")]
-        public int StoreId { get; set; }
+        public string StoreId { get; set; }
 
         [JsonProperty("firstName")]
         public string? FirstName { get; set; }
@@ -31,7 +31,7 @@ namespace my_customers_cosmos_db_C_.Models
         public class CreateCustomerAddressResponseModel
         {
             [JsonProperty("storeId")]
-            public int StoreId { get; set; }
+            public string StoreId { get; set; }
 
             [JsonProperty("street")]
             public string? Street { get; set; }

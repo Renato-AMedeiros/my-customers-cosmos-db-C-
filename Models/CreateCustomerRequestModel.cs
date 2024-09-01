@@ -4,11 +4,8 @@ namespace my_customers_cosmos_db_C_.Models
 {
     public class CreateCustomerRequestModel
     {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
         [JsonProperty("storeId")]
-        public int StoreId { get; set; }
+        public string StoreId { get; set; }
 
         [JsonProperty("firstName")]
         public string? FirstName { get; set; }
@@ -22,17 +19,14 @@ namespace my_customers_cosmos_db_C_.Models
         [JsonProperty("documentType")]
         public string DocumentType { get; set; }
 
-        [JsonProperty("createdDate")]
-        public DateTime CreatedDate { get; set; }
-
         [JsonProperty("customerAddresses")]
-        public List<CreateCustomerAddressRequestModel> CustomerAddresses { get; set; }
+        public List<CreateCustomerAddressRequestModel>? CustomerAddresses { get; set; }
     }
 
     public class CreateCustomerAddressRequestModel
     {
         [JsonProperty("storeId")]
-        public int StoreId { get; set; }
+        public string StoreId { get; set; }
 
         [JsonProperty("street")]
         public string? Street { get; set; }

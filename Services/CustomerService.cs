@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.Cosmos;
 using my_customers_cosmos_db_C_.Models;
+using Newtonsoft.Json;
 using static my_customers_cosmos_db_C_.Models.CreateCustomerResponseModel;
 
 namespace my_customers_cosmos_db_C_.Services
@@ -7,20 +8,15 @@ namespace my_customers_cosmos_db_C_.Services
 
     public class CustomerService
     {
-        private readonly CosmosClient _cosmosClient;
         private readonly Container _container;
 
-        public CustomerService(CosmosClient cosmosClient)
+        public CustomerService(CosmosClient client)
         {
-            _cosmosClient = cosmosClient;
-            _container = _cosmosClient.GetContainer("Supermarkets", "StoreId"); // Substitua "storeId" pelo nome da sua partição se necessário
+            _container = client.GetContainer("Customers", "Supermarkets");
         }
 
         public async Task<CreateCustomerResponseModel> CreateCustomer(CreateCustomerRequestModel model)
         {
-            if (model != null && model.StoreId != 001)
-                throw new InvalidOperationException("Invalid StoreId");
-
             var listAddress = new List<CreateCustomerAddressResponseModel>();
 
             foreach (var address in model.CustomerAddresses)
@@ -36,7 +32,7 @@ namespace my_customers_cosmos_db_C_.Services
                 listAddress.Add(customerAddress);
             }
 
-            var customer = new CreateCustomerResponseModel()
+            var customer = new CreateCustomerResponseModel
             {
                 Id = Guid.NewGuid().ToString(),
                 StoreId = model.StoreId,
@@ -44,17 +40,23 @@ namespace my_customers_cosmos_db_C_.Services
                 DocumentType = model.DocumentType,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                CreatedDate = model.CreatedDate,
+                CreatedDate = DateTime.UtcNow,
                 CustomerAddresses = listAddress
             };
 
-            // Salvar o cliente no Cosmos DB
-            var partitionKey = new PartitionKey(model.StoreId.ToString()); // Se "storeId" for sua partição
+            var partitionKey = new PartitionKey(model.StoreId); // Definindo a chave de partição
 
-            await _container.CreateItemAsync(customer, partitionKey);
-
-            return customer;
+            try
+            {
+                await _container.CreateItemAsync(customer, partitionKey);
+                return customer;
+            }
+            catch (CosmosException ex)
+            {
+                // Tratar exceção
+                Console.WriteLine($"Error occurred: {ex.Message}");
+                throw;
+            }
         }
-
     }
 }

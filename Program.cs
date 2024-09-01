@@ -1,5 +1,7 @@
 using Microsoft.Azure.Cosmos;
+using Microsoft.OpenApi.Models;
 using my_customers_cosmos_db_C_.Services;
+using Newtonsoft.Json;
 
 namespace my_customers_cosmos_db_C_
 {
@@ -20,12 +22,24 @@ namespace my_customers_cosmos_db_C_
                 return new CosmosClient(connectionString, cosmosClientOptions);
             });
 
+            // Add services to the container.
+            builder.Services.AddControllers()
+                        .AddNewtonsoftJson(options =>
+                        {
+                            options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                            options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                        });
+
             builder.Services.AddTransient<CustomerService>();
 
-            // Add services to the container.
-            builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+
+                // Configura o cabeçalho personalizado
+                c.OperationFilter<CustomHeaderOperationFilter>();
+            });
 
             var app = builder.Build();
 
