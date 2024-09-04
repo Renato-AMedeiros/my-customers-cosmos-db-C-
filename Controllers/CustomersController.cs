@@ -10,7 +10,6 @@ namespace my_customers_cosmos_db_C_.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
-
         private readonly CustomerService _customerService;
 
         public CustomersController(CustomerService customerService)
@@ -34,10 +33,18 @@ namespace my_customers_cosmos_db_C_.Controllers
             return Ok(response);
         }
 
-        [HttpGet]
+        [HttpGet("id")]
         public async Task<IActionResult> GetCustomerById([FromQuery] string customerId, [FromQuery] string partitionKey)
         {
             var response = await _customerService.GetCustomerById(customerId, partitionKey);
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCustomerList()
+        {
+            var response = await _customerService.GetCustomerList();
 
             return Ok(response);
         }
@@ -49,6 +56,5 @@ namespace my_customers_cosmos_db_C_.Controllers
 
             return NoContent();
         }
-
     }
 }

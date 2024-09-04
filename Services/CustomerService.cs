@@ -103,9 +103,7 @@ namespace my_customers_cosmos_db_C_.Services
 
                 throw new BadRequestException($"Error updating in CosmosDb {ex}");
             }
-
         }
-
 
         public async Task<GetCustomerByIdResponseModel> GetCustomerById(string customerId, string partitionKey)
         {
@@ -121,6 +119,36 @@ namespace my_customers_cosmos_db_C_.Services
             {
                 throw new NotFoundException($"customer not exists {ex}");
             }
+        }
+
+        public async Task<List<GetCustomerListResponseModel>> GetCustomerList()
+        {
+            var sqlQuery = "SELECT * from c";
+
+            QueryDefinition queryDefinition = new QueryDefinition(sqlQuery);
+
+            FeedIterator<GetCustomerListResponseModel> queryResultSetIterator = _container.GetItemQueryIterator<GetCustomerListResponseModel>(queryDefinition);
+
+            List<GetCustomerListResponseModel> customers = new List<GetCustomerListResponseModel>();
+
+            try
+            {
+                while (queryResultSetIterator.HasMoreResults)
+                {
+                    FeedResponse<GetCustomerListResponseModel> currentResultSet = await queryResultSetIterator.ReadNextAsync();
+                    foreach (GetCustomerListResponseModel employee in currentResultSet)
+                    {
+                        customers.Add(employee);
+                    }
+                }
+            }
+            catch (Exception ex )
+            {
+
+                throw new BadRequestException($"Error get customers in CosmosDb {ex}");
+            }
+
+            return customers;
         }
 
         public async Task DeleteCustomerById(string customerId, string partitionKey)
