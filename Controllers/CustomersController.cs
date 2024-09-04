@@ -30,9 +30,7 @@ namespace my_customers_cosmos_db_C_.Controllers
         public async Task<IActionResult> UpdateCustomer([FromQuery] string customerId, [FromBody] UpdateCustomerRequestModel model)
         {
             var response = await _customerService.UpdateCustomer(customerId, model);
-
-         
-
+      
             return Ok(response);
         }
 

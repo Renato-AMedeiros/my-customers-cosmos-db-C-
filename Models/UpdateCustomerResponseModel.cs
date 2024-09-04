@@ -4,6 +4,9 @@ namespace my_customers_cosmos_db_C_.Models
 {
     public class UpdateCustomerResponseModel
     {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
         [JsonProperty("storeId")]
         public string StoreId { get; set; }
 

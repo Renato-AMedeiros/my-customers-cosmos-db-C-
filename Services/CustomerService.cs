@@ -1,6 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Cosmos;
+﻿using Microsoft.Azure.Cosmos;
 using my_customers_cosmos_db_C_.Exceptions;
 using my_customers_cosmos_db_C_.Models;
 using static my_customers_cosmos_db_C_.Models.CreateCustomerResponseModel;
@@ -64,41 +62,48 @@ namespace my_customers_cosmos_db_C_.Services
         {
             var customer = await GetCustomerById(customerId, model.StoreId);
 
-            //if (model.CustomerAddresses != null) 
-            //{
-            //    var listAddress = new List<UpdateCustomerAddressRequestModel>();
+            var listAddress = new List<UpdateCustomerAddressResponseModel>();
 
-            //    foreach (var address in model.CustomerAddresses)
-            //    {
-            //        var customerAddress = new UpdateCustomerAddressRequestModel
-            //        {
-            //            StoreId = model.StoreId,
-            //            Street = model.Street,
-            //            Neighborhood = model.Neighborhood,
-            //            HouseNumber = model.HouseNumber,
-            //        };
+            if (model.CustomerAddresses != null)
+            {
+                foreach (var address in model.CustomerAddresses)
+                {
+                    var customerAddress = new UpdateCustomerAddressResponseModel
+                    {
+                        StoreId = model.StoreId,
+                        Street = address.Street,
+                        Neighborhood = address.Neighborhood,
+                        HouseNumber = address.HouseNumber,
+                    };
 
-            //        listAddress.Add(customerAddress);
-            //    }
-            //}
-
+                    listAddress.Add(customerAddress);
+                }
+            }
 
             var updateCustomer = new UpdateCustomerResponseModel
             {
+                Id = customerId,
                 StoreId = model.StoreId,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Document = model.Document,
                 DocumentType = model.DocumentType,
-              
-
-
+                CustomerAddresses = listAddress
             };
 
+            var partitionKey = new PartitionKey(model.StoreId);
 
+            try
+            {
+                var response = await _container.ReplaceItemAsync<UpdateCustomerResponseModel>(updateCustomer, customerId, partitionKey);
+                return response;
+            }
+            catch (Exception ex)
+            {
 
+                throw new BadRequestException($"Error updating in CosmosDb {ex}");
+            }
 
-            return null;
         }
 
 
