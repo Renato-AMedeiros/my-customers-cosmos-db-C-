@@ -18,11 +18,20 @@ namespace my_customers_cosmos_db_C_.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCustomers([FromBody] CreateCustomerRequestModel model )
+        public async Task<IActionResult> CreateCustomer([FromBody] CreateCustomerRequestModel model)
         {
             var response = await _customerService.CreateCustomer(model);
 
             return Ok(response);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCustomerById([FromQuery] string customerId, [FromQuery] string partitionKey)
+        {
+            var response = await _customerService.GetCustomerById(customerId, partitionKey);
+
+            return Ok(response);
+        }
+
     }
 }
