@@ -40,7 +40,7 @@ namespace my_customers_cosmos_db_C_.Models
             public string? Neighborhood { get; set; }
 
             [JsonProperty("houseNumber")]
-            public int HouseNumber { get; set; }
+            public int? HouseNumber { get; set; }
         }
     }
 }

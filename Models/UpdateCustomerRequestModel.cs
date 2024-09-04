@@ -2,7 +2,7 @@
 
 namespace my_customers_cosmos_db_C_.Models
 {
-    public class CreateCustomerRequestModel
+    public class UpdateCustomerRequestModel
     {
         [JsonProperty("storeId")]
         public string StoreId { get; set; }
@@ -20,10 +20,10 @@ namespace my_customers_cosmos_db_C_.Models
         public string DocumentType { get; set; }
 
         [JsonProperty("customerAddresses")]
-        public List<CreateCustomerAddressRequestModel>? CustomerAddresses { get; set; }
+        public List<UpdateCustomerAddressRequestModel>? CustomerAddresses { get; set; }
     }
 
-    public class CreateCustomerAddressRequestModel
+    public class UpdateCustomerAddressRequestModel
     {
         [JsonProperty("storeId")]
         public string StoreId { get; set; }
@@ -38,3 +38,4 @@ namespace my_customers_cosmos_db_C_.Models
         public int? HouseNumber { get; set; }
     }
 }
+

@@ -46,7 +46,7 @@ namespace my_customers_cosmos_db_C_.Services
                 CustomerAddresses = listAddress
             };
 
-            var partitionKey = new PartitionKey(model.StoreId); // Definindo a chave de partição
+            var partitionKey = new PartitionKey(model.StoreId);
 
             try
             {
@@ -60,19 +60,75 @@ namespace my_customers_cosmos_db_C_.Services
             }
         }
 
-        public async Task <GetCustomerByIdResponseModel> GetCustomerById (string customerId, string partitionKey)
+        public async Task<UpdateCustomerResponseModel> UpdateCustomer(string customerId, UpdateCustomerRequestModel model)
+        {
+            var customer = await GetCustomerById(customerId, model.StoreId);
+
+            //if (model.CustomerAddresses != null) 
+            //{
+            //    var listAddress = new List<UpdateCustomerAddressRequestModel>();
+
+            //    foreach (var address in model.CustomerAddresses)
+            //    {
+            //        var customerAddress = new UpdateCustomerAddressRequestModel
+            //        {
+            //            StoreId = model.StoreId,
+            //            Street = model.Street,
+            //            Neighborhood = model.Neighborhood,
+            //            HouseNumber = model.HouseNumber,
+            //        };
+
+            //        listAddress.Add(customerAddress);
+            //    }
+            //}
+
+
+            var updateCustomer = new UpdateCustomerResponseModel
+            {
+                StoreId = model.StoreId,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Document = model.Document,
+                DocumentType = model.DocumentType,
+              
+
+
+            };
+
+
+
+
+            return null;
+        }
+
+
+        public async Task<GetCustomerByIdResponseModel> GetCustomerById(string customerId, string partitionKey)
         {
             var sendPartitionKey = new PartitionKey(partitionKey);
 
             try
             {
-                var customer = await _container.ReadItemAsync<GetCustomerByIdResponseModel>(customerId, sendPartitionKey);
+                ItemResponse<GetCustomerByIdResponseModel> customer = await _container.ReadItemAsync<GetCustomerByIdResponseModel>(customerId, sendPartitionKey);
 
                 return customer;
             }
             catch (Exception ex)
             {
-                throw new NotFoundException($"customer not exists {ex}");           
+                throw new NotFoundException($"customer not exists {ex}");
+            }
+        }
+
+        public async Task DeleteCustomerById(string customerId, string partitionKey)
+        {
+            var sendPartitionKey = new PartitionKey(partitionKey);
+
+            try
+            {
+                var customer = await _container.DeleteItemAsync<GetCustomerByIdResponseModel>(customerId, sendPartitionKey);
+            }
+            catch (Exception ex)
+            {
+                throw new NotFoundException($"customer not exists {ex}");
             }
         }
     }
